@@ -2,12 +2,8 @@ pipeline {
     agent any
 
     tools {
-        jdk 'Java-17'          // Name must match JDK configured in Jenkins Global Tool Config
-        maven 'Maven-3.9.11'   // Name must match Maven configured in Jenkins Global Tool Config
-    }
-
-    environment {
-        PATH = "${tool 'Maven-3.9.11'}/bin:${tool 'Java-17'}/bin:${env.PATH}"
+        jdk 'Java-17'          // Must match Jenkins JDK name
+        maven 'Maven-3.9.11'   // Must match Jenkins Maven name
     }
 
     stages {
@@ -19,14 +15,40 @@ pipeline {
 
         stage('Build & Test') {
             steps {
-                bat "mvn clean test -DsuiteXmlFile=src/test/resources/testng.xml -e -X"
+                // Run TestNG suite
+                bat 'mvn clean test -DsuiteXmlFile=testng.xml'
+            }
+        }
+
+        stage('Publish Reports') {
+            steps {
+                // Publish TestNG results
+                junit 'target/surefire-reports/*.xml'
+
+                // Archive Cucumber HTML report
+                publishHTML(target: [
+                    allowMissing: true,
+                    keepAll: true,
+                    reportDir: 'reports',
+                    reportFiles: 'cucumber-report.html',
+                    reportName: 'Cucumber Report'
+                ])
+
+                // Archive screenshots
+                archiveArtifacts artifacts: 'screenshots/*.png', allowEmptyArchive: true
             }
         }
     }
 
     post {
         always {
-            junit 'target/surefire-reports/*.xml'
+            echo 'Cleaning up...'
+        }
+        success {
+            echo 'Build & Tests completed successfully ✅'
+        }
+        failure {
+            echo 'Build failed ❌ — Check reports and logs.'
         }
     }
 }
