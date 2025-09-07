@@ -1,44 +1,16 @@
 pipeline {
     agent any
 
-    tools {
-        maven 'MAVEN_HOME'   
-        jdk 'JAVA_HOME'      
-    }
-
     stages {
         stage('Checkout') {
             steps {
-                git branch: 'main',
-                    url: 'https://github.com/your-username/your-repo.git'
+                git branch: 'main', url: 'https://github.com/likhi-th123/SauceDemoAutomationProject.git'
             }
         }
-
-        stage('Build') {
+        stage('Build & Test') {
             steps {
-                sh 'mvn clean install -DskipTests'
+                bat 'mvn clean test -DsuiteXmlFile=src/test/resources/testng.xml'
             }
-        }
-
-        stage('Run Tests') {
-            steps {
-                // Run Cucumber + TestNG tests
-                sh 'mvn test'
-            }
-        }
-
-        stage('Generate Report') {
-            steps {
-                // If you use ExtentReport or Allure
-                sh 'mvn site'
-            }
-        }
-    }
-
-    post {
-        always {
-            junit '**/target/surefire-reports/*.xml'  // Publish TestNG/Cucumber results
-            archiveArtifacts artifacts: 'target/**/*.html', allowEmptyArchive: true
         }
     }
 }
