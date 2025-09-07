@@ -6,7 +6,6 @@
 		</listeners>
 	<test thread-count="5" name="Test">
 		<classes>
-			<class name="base.BaseTest" />
 			<class name="tests.ProductTest" />
 			<class name="tests.LoginTest" />
 			<class name="tests.CartTest" />
@@ -18,3 +17,4 @@
 
 	</test> 
 </suite> 
+
