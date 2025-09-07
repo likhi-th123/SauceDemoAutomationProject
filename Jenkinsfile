@@ -2,8 +2,12 @@ pipeline {
     agent any
 
     tools {
-        jdk 'Java-17'          // Configure JDK in Jenkins global tools
-        maven 'Maven-3.9.11'   // Configure Maven in Jenkins global tools
+        jdk 'Java-17'          // Name must match JDK configured in Jenkins Global Tool Config
+        maven 'Maven-3.9.11'   // Name must match Maven configured in Jenkins Global Tool Config
+    }
+
+    environment {
+        PATH = "${tool 'Maven-3.9.11'}/bin:${tool 'Java-17'}/bin:${env.PATH}"
     }
 
     stages {
@@ -15,9 +19,14 @@ pipeline {
 
         stage('Build & Test') {
             steps {
-                bat "mvn clean test -DsuiteXmlFile=src/test/resources/testng.xml"
+                bat "mvn clean test -DsuiteXmlFile=src/test/resources/testng.xml -e -X"
             }
         }
     }
-}
 
+    post {
+        always {
+            junit 'target/surefire-reports/*.xml'
+        }
+    }
+}
