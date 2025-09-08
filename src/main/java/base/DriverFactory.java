@@ -3,6 +3,7 @@ package base;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.edge.EdgeDriver;
 import org.openqa.selenium.edge.EdgeOptions;
+import java.io.File;
 
 public class DriverFactory {
 
@@ -11,13 +12,20 @@ public class DriverFactory {
     // Initialize WebDriver
     public static void initDriver() {
         if (tlDriver.get() == null) {
-            // Set the path to your local EdgeDriver
+            // Local EdgeDriver path
             System.setProperty("webdriver.edge.driver", "C:\\Webdrivers\\msedgedriver.exe");
 
             EdgeOptions options = new EdgeOptions();
+
+            // Important options to prevent crash
+            options.addArguments("--remote-allow-origins=*");  // required for latest Edge versions
+            options.addArguments("--disable-gpu");
+            options.addArguments("--no-sandbox");
+            options.addArguments("start-maximized");
+            options.addArguments("user-data-dir=" + new File(System.getProperty("java.io.tmpdir"), "EdgeProfile").getAbsolutePath());
+
             WebDriver driver = new EdgeDriver(options);
 
-            driver.manage().window().maximize();
             tlDriver.set(driver);
         }
     }
