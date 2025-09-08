@@ -23,7 +23,7 @@
             <version>4.19.1</version>
         </dependency>
 
-        <!-- ✅ TestNG (compile scope so main + test can use it) -->
+        <!-- ✅ TestNG -->
         <dependency>
             <groupId>org.testng</groupId>
             <artifactId>testng</artifactId>
@@ -99,23 +99,22 @@
             </plugin>
 
             <!-- ✅ Surefire Plugin (for TestNG integration) -->
-           <build>
-  <plugins>
-    <plugin>
-      <groupId>org.apache.maven.plugins</groupId>
-      <artifactId>maven-surefire-plugin</artifactId>
-      <version>3.1.2</version>
-      <configuration>
-        <excludes>
-          <exclude>**/AppTest.java</exclude>
-        </excludes>
-        <suiteXmlFiles>
-          <suiteXmlFile>src/test/resources/testng.xml</suiteXmlFile>
-        </suiteXmlFiles>
-      </configuration>
-    </plugin>
-  </plugins>
-</build>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>3.1.2</version>
+                <configuration>
+                    <!-- Exclude old AppTest -->
+                    <excludes>
+                        <exclude>**/AppTest.java</exclude>
+                    </excludes>
+                    <!-- Point to testng.xml -->
+                    <suiteXmlFiles>
+                        <suiteXmlFile>src/test/resources/testng.xml</suiteXmlFile>
+                    </suiteXmlFiles>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
 
 </project>
-
