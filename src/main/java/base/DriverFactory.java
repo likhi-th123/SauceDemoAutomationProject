@@ -3,16 +3,17 @@ package base;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.edge.EdgeDriver;
 import org.openqa.selenium.edge.EdgeOptions;
+import io.github.bonigarcia.wdm.WebDriverManager;
 
 public class DriverFactory {
 
-    private static final ThreadLocal<WebDriver> tlDriver = new ThreadLocal<>(); //ThreadLocal ensures that
-    																			//each test thread gets its own WebDriver instance.
+    private static final ThreadLocal<WebDriver> tlDriver = new ThreadLocal<>();
 
+    // Initialize WebDriver
     public static void initDriver() {
         if (tlDriver.get() == null) {
-        	System.setProperty("webdriver.edge.driver", 
-        		    "C:\\Users\\HP\\Downloads\\edgedriver_win64 (1)\\msedgedriver.exe");
+            // Automatically download and setup EdgeDriver
+            WebDriverManager.edgedriver().setup();
 
             EdgeOptions options = new EdgeOptions();
             WebDriver driver = new EdgeDriver(options);
@@ -22,14 +23,16 @@ public class DriverFactory {
         }
     }
 
+    // Get the current thread's driver
     public static WebDriver getDriver() {
         return tlDriver.get();
     }
 
+    // Quit the driver and remove from ThreadLocal
     public static void quitDriver() {
         if (tlDriver.get() != null) {
-            tlDriver.get().quit(); //closes the browser.
-            tlDriver.remove();		//clears the saved browser driver from memory
+            tlDriver.get().quit();
+            tlDriver.remove();
         }
     }
 }
