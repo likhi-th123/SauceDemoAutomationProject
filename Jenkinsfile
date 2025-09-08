@@ -15,24 +15,26 @@ pipeline {
 
         stage('Build & Test') {
             steps {
-                // Build dependencies without running tests
-                 bat 'mvn clean test -Dheadless=true'
-            }
-        }
-
-        post {
-                always {
-                    archiveArtifacts artifacts: 'test-output/**', fingerprint: true
-                    publishHTML([
-                        allowMissing: false,
-                        alwaysLinkToLastBuild: true,
-                        keepAll: true,
-                        reportDir: 'test-output',
-                        reportFiles: 'dashboard.html',
-                        reportName: 'Extent Report'
-                    ])
-                }
+                // Build dependencies and run tests
+                bat 'mvn clean test -Dheadless=true'
             }
         }
     }
 
+    post {
+        always {
+            // Archive all test-output files
+            archiveArtifacts artifacts: 'test-output/**', fingerprint: true
+
+            // Publish Extent Report
+            publishHTML([
+                allowMissing: false,
+                alwaysLinkToLastBuild: true,
+                keepAll: true,
+                reportDir: 'test-output',
+                reportFiles: 'dashboard.html',
+                reportName: 'Extent Report'
+            ])
+        }
+    }
+}
