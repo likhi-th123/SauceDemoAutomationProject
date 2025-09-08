@@ -13,40 +13,26 @@ pipeline {
             }
         }
 
-        stage('Build') {
+        stage('Build & Test') {
             steps {
                 // Build dependencies without running tests
-                bat "mvn clean install -DskipTests"
+                 bat 'mvn clean test -Dheadless=true'
             }
         }
 
-        stage('Run Cucumber Tests') {
-            steps {
-                // Run Cucumber with proper plugin configs for v7+
-                bat '''
-                    mvn test ^
-                    -Dcucumber.plugin="json:target/cucumber-reports/cucumber.json,html:target/cucumber-reports/cucumber-html-report.html" ^
-                    -Dcucumber.features="src/test/resources/features"
-                '''
-            }
-        }
-
-        stage('Reports') {
-            steps {
-                // Publish cucumber results
-                cucumber fileIncludePattern: '**/target/cucumber-reports/cucumber.json', trendsLimit: 10
-
-                // Archive generated reports
-                archiveArtifacts artifacts: 'target/cucumber-reports/**/*', fingerprint: true
-                archiveArtifacts artifacts: 'screenshots/**/*', fingerprint: true
+        post {
+                always {
+                    archiveArtifacts artifacts: 'test-output/**', fingerprint: true
+                    publishHTML([
+                        allowMissing: false,
+                        alwaysLinkToLastBuild: true,
+                        keepAll: true,
+                        reportDir: 'test-output',
+                        reportFiles: 'dashboard.html',
+                        reportName: 'Extent Report'
+                    ])
+                }
             }
         }
     }
 
-    post {
-        always {
-            echo "Cleaning workspace..."
-            deleteDir()
-        }
-    }
-}
