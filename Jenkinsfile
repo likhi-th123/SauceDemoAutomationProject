@@ -13,27 +13,27 @@ pipeline {
             }
         }
 
-        stage('Build & Install') {
+        stage('Build') {
             steps {
-                // Clean, install dependencies and update snapshots
-                bat "mvn clean install -U"
+                // Build dependencies without running tests
+                bat "mvn clean install -DskipTests"
             }
         }
 
-        stage('Run Tests') {
+        stage('Run Cucumber Tests') {
             steps {
-                // Run TestNG tests
-                bat "mvn test -DsuiteXmlFile=testng.xml"
+                // Run your Cucumber TestRunner
+                bat "mvn test -Dcucumber.options='--plugin json:target/cucumber-reports/cucumber.json --plugin html:target/cucumber-reports/cucumber-html-report'"
             }
         }
 
         stage('Reports') {
             steps {
-                // Publish TestNG results
-                junit '**/test-output/testng-results.xml'
+                // Publish cucumber results
+                cucumber fileIncludePattern: '**/target/cucumber-reports/cucumber.json', trendsLimit: 10
 
-                // Archive screenshots and reports
-                archiveArtifacts artifacts: 'reports/**/*', fingerprint: true
+                // Archive generated reports
+                archiveArtifacts artifacts: 'target/cucumber-reports/**/*', fingerprint: true
                 archiveArtifacts artifacts: 'screenshots/**/*', fingerprint: true
             }
         }
