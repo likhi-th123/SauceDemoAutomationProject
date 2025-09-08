@@ -16,7 +16,7 @@ pipeline {
         stage('Build & Test') {
             steps {
                 // Run TestNG suite
-                bat 'mvn clean test -DsuiteXmlFile=testng.xml'
+                bat "mvn clean test -DsuiteXmlFile=testng.xml"
             }
         }
 
@@ -52,3 +52,4 @@ pipeline {
         }
     }
 }
+
