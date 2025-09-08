@@ -2,43 +2,55 @@ pipeline {
     agent any
 
     tools {
-        maven 'MAVEN_HOME'   
-        jdk 'JAVA_HOME'      
+        jdk 'Java-17'          // Must match Jenkins JDK name
+        maven 'Maven-3.9.11'   // Must match Jenkins Maven name
     }
 
     stages {
         stage('Checkout') {
             steps {
-                git branch: 'main',
-                    url: 'https://github.com/your-username/your-repo.git'
+                git branch: 'main', url: 'https://github.com/likhi-th123/SauceDemoAutomationProject.git'
             }
         }
 
-        stage('Build') {
+        stage('Build & Test') {
             steps {
-                sh 'mvn clean install -DskipTests'
+                // Run TestNG suite
+                bat "mvn clean test -DsuiteXmlFile=testng.xml"
             }
         }
 
-        stage('Run Tests') {
+        stage('Publish Reports') {
             steps {
-                // Run Cucumber + TestNG tests
-                sh 'mvn test'
-            }
-        }
+                // Publish TestNG results
+                junit 'target/surefire-reports/*.xml'
 
-        stage('Generate Report') {
-            steps {
-                // If you use ExtentReport or Allure
-                sh 'mvn site'
+                // Archive Cucumber HTML report
+                publishHTML(target: [
+                    allowMissing: true,
+                    keepAll: true,
+                    reportDir: 'reports',
+                    reportFiles: 'cucumber-report.html',
+                    reportName: 'Cucumber Report'
+                ])
+
+                // Archive screenshots
+                archiveArtifacts artifacts: 'screenshots/*.png', allowEmptyArchive: true
             }
         }
     }
 
     post {
         always {
-            junit '**/target/surefire-reports/*.xml'  // Publish TestNG/Cucumber results
-            archiveArtifacts artifacts: 'target/**/*.html', allowEmptyArchive: true
+            echo 'Cleaning up...'
+        }
+        success {
+            echo 'Build & Tests completed successfully '
+        }
+        failure {
+            echo 'Build failed  — Check reports and logs.'
         }
     }
 }
+
+
