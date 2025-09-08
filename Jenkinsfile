@@ -22,8 +22,12 @@ pipeline {
 
         stage('Run Cucumber Tests') {
             steps {
-                // Run your Cucumber TestRunner
-                bat "mvn test -Dcucumber.options='--plugin json:target/cucumber-reports/cucumber.json --plugin html:target/cucumber-reports/cucumber-html-report'"
+                // Run Cucumber with proper plugin configs for v7+
+                bat '''
+                    mvn test ^
+                    -Dcucumber.plugin="json:target/cucumber-reports/cucumber.json,html:target/cucumber-reports/cucumber-html-report.html" ^
+                    -Dcucumber.features="src/test/resources/features"
+                '''
             }
         }
 
