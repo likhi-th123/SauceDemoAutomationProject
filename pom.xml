@@ -32,6 +32,15 @@
          
         </dependency>
 
+             <!-- JUnit 3 (for legacy TestCase) -->
+         <dependency>
+             <groupId>junit</groupId>
+             <artifactId>junit</artifactId>
+             <version>3.8.1</version>
+             <scope>test</scope>
+         </dependency>
+
+
         <!-- ExtentReports -->
         <dependency>
             <groupId>com.aventstack</groupId>
@@ -113,4 +122,5 @@
         </plugins>
     </build>
 </project>
+
 
