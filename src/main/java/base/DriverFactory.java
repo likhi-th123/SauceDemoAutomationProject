@@ -3,7 +3,6 @@ package base;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.edge.EdgeDriver;
 import org.openqa.selenium.edge.EdgeOptions;
-import io.github.bonigarcia.wdm.WebDriverManager;
 
 public class DriverFactory {
 
@@ -12,8 +11,8 @@ public class DriverFactory {
     // Initialize WebDriver
     public static void initDriver() {
         if (tlDriver.get() == null) {
-            // Automatically download and setup EdgeDriver
-            WebDriverManager.edgedriver().setup();
+            // Set EdgeDriver path BEFORE creating EdgeDriver
+            System.setProperty("webdriver.edge.driver", "C:\\path\\to\\msedgedriver.exe");
 
             EdgeOptions options = new EdgeOptions();
             WebDriver driver = new EdgeDriver(options);
