@@ -2,8 +2,8 @@ pipeline {
     agent any
 
     tools {
-        jdk 'Java-17'         
-        maven 'Maven-3.9.11'   
+        jdk 'Java-17'          // Must match Jenkins JDK name
+        maven 'Maven-3.9.11'   // Must match Jenkins Maven name
     }
 
     stages {
@@ -17,19 +17,6 @@ pipeline {
             steps {
                 // Build dependencies and run tests
                 bat 'mvn clean test -Dheadless=true'
-            }
-        }
-        
-        stage('Git Auto Push') {
-            steps {
-                script {
-                    bat 'git config user.email "jenkins@example.com"'
-                    bat 'git config user.name "Jenkins"'
-                    bat 'git add .'
-                    bat 'git commit -m "Jenkins build #${BUILD_NUMBER}" || echo No changes'
-                    bat 'git push https://likhi-th123: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@github.com/likhi-th123/SauceDemoAutomationProject.git main'
-
-                }
             }
         }
     }
