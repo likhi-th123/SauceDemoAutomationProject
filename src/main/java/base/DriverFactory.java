@@ -11,8 +11,8 @@ public class DriverFactory {
     // Initialize WebDriver
     public static void initDriver() {
         if (tlDriver.get() == null) {
-            // Set EdgeDriver path BEFORE creating EdgeDriver
-            System.setProperty("webdriver.edge.driver", "C:\\path\\to\\msedgedriver.exe");
+            // Set the path to your local EdgeDriver
+            System.setProperty("webdriver.edge.driver", "C:\\Webdrivers\\msedgedriver.exe");
 
             EdgeOptions options = new EdgeOptions();
             WebDriver driver = new EdgeDriver(options);
